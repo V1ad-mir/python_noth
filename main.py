@@ -1,16 +1,51 @@
-# This is a sample Python script.
+1import datetime
+import shutil
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import text
+from note_manager import NoteManager
+from file_manager import FileManager
 
+note_manager = NoteManager(text.defaultFileName)
+note_manager.save_notes(text.defaultFileName)
+name = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S") + text.expansion
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+while True:
+    command = input(text.textMenu)
+    match command:
+        case "1":
+            note_manager.add_note()
+        case "2":
+            note_manager.edit_note()
+        case "3":
+            note_manager.delete_note()
+        case "4":
+            date = input(text.dateInput)
+            note_manager.filter_notes(date)
+        case "5":
+            note_manager.display_notes()
+        case "6":
+            file_manager = FileManager()
+            file_manager.scan_folder()
+            print()
+        case "7":
+            try:
+                name = (input(text.nameFile) + text.expansion)
+                shutil.copy2(name, text.defaultFileName)
+                note_manager.read_notes()
+                print(text.successLoad)
+            except FileNotFoundError:
+                print(text.checkFile)
 
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+        case "8":
+            note_manager.save_notes(FileManager.save_file(name))
+        case "9":
+            name_file = (input(text.nameFile) + text.expansion)
+            FileManager.delete_file(name_file)
+        case "0":
+            answer = input(text.yesSave).lower()
+            if answer == text.yes:
+                note_manager.save_notes(FileManager.save_file(name))
+            FileManager.delete_file(text.defaultFileName)
+            break
+        case _:
+            print(text.menuError)
